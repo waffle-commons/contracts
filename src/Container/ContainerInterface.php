@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Waffle\Commons\Contracts\Container;
 
+use Psr\Container\ContainerInterface as PsrContainerInterface;
+
 /**
  * Interface for the Waffle service container.
  */
-interface ContainerInterface
+interface ContainerInterface extends PsrContainerInterface
 {
     /**
      * Finds an entry of the container by its identifier and returns it.
@@ -16,6 +18,7 @@ interface ContainerInterface
      *
      * @return mixed No entry was found for **this** identifier.
      */
+    #[\Override]
     public function get(string $id): mixed;
 
     /**
@@ -24,6 +27,7 @@ interface ContainerInterface
      *
      * @param string $id Identifier of the entry to look for.
      */
+    #[\Override]
     public function has(string $id): bool;
 
     /**

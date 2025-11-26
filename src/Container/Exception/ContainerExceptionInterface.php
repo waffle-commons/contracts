@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Waffle\Commons\Contracts\Container\Exception;
 
-interface ContainerExceptionInterface
+use Psr\Container\ContainerExceptionInterface as PsrContainerExceptionInterface;
+
+interface ContainerExceptionInterface extends PsrContainerExceptionInterface
 {
 }
