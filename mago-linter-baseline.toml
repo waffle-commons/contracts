@@ -1,0 +1,14 @@
+[[entries."src/Config/ConfigInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 14
+end_line = 14
+
+[[entries."tests/src/AbstractTestCase.php".issues]]
+code = "no-redundant-method-override"
+start_line = 10
+end_line = 14
+
+[[entries."tests/src/AbstractTestCase.php".issues]]
+code = "no-redundant-method-override"
+start_line = 16
+end_line = 20
