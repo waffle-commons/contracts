@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Waffle\Commons\Contracts\Security;
 
-use Waffle\Exception\SecurityException;
+use Waffle\Commons\Contracts\Security\Exception\SecurityExceptionInterface;
 
 interface SecurityRuleInterface
 {
     /**
-     * @throws SecurityException
+     * @throws SecurityExceptionInterface
      */
     public function check(object $object): void;
 }
