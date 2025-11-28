@@ -13,6 +13,6 @@ interface RuntimeInterface
     public function run(
         KernelInterface $kernel,
         ServerRequestInterface $request,
-        ResponseEmitterInterface $emitter
+        ResponseEmitterInterface $emitter,
     ): void;
 }
