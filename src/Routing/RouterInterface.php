@@ -12,18 +12,19 @@ interface RouterInterface
     public function boot(ContainerInterface $container): self;
 
     /**
-     * @param ContainerInterface $container
-     * @param ServerRequestInterface $req
-     * @param array{
+     * Matches the current request against registered routes.
+     *
+     * @param ServerRequestInterface $request
+     * @return array{
      *        classname: class-string,
      *        method: string,
      *        arguments: array<string, mixed>,
      *        path: string,
-     *        name: non-falsy-string
-     *   } $route
-     * @return bool
+     *        name: non-falsy-string,
+     *        params?: array<string, mixed>
+     *   }|null Returns the route array if matched, null otherwise.
      */
-    public function match(ContainerInterface $container, ServerRequestInterface $req, array $route): bool;
+    public function matchRequest(ServerRequestInterface $request): null|array;
 
     /**
      * @return array<array-key, array{

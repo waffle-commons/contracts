@@ -1,6 +1,6 @@
 {
     "name": "waffle-commons/contracts",
-    "version": "0.1.0-alpha1",
+    "version": "0.1.0-alpha3",
     "description": "Contracts component for Waffle framework.",
     "type": "library",
     "license": "MIT",
