@@ -1,0 +1,13 @@
+variant = "loose"
+
+[[issues]]
+file = "src/Config/ConfigInterface.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "tests/src/AbstractTestCase.php"
+code = "no-redundant-method-override"
+message = "Redundant method override."
+count = 2
