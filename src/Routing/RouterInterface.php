@@ -24,7 +24,7 @@ interface RouterInterface
      *        params?: array<string, mixed>
      *   }|null Returns the route array if matched, null otherwise.
      */
-    public function matchRequest(ServerRequestInterface $request): null|array;
+    public function matchRequest(ServerRequestInterface $request): ?array;
 
     /**
      * @return array<array-key, array{

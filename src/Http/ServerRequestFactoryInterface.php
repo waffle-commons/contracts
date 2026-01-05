@@ -6,6 +6,4 @@ namespace Waffle\Commons\Contracts\Http;
 
 use Psr\Http\Message\ServerRequestFactoryInterface as PsrServerRequestFactoryInterface;
 
-interface ServerRequestFactoryInterface extends PsrServerRequestFactoryInterface
-{
-}
+interface ServerRequestFactoryInterface extends PsrServerRequestFactoryInterface {}
