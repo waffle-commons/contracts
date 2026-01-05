@@ -6,6 +6,4 @@ namespace Waffle\Commons\Contracts\Container\Exception;
 
 use Psr\Container\ContainerExceptionInterface as PsrContainerExceptionInterface;
 
-interface ContainerExceptionInterface extends PsrContainerExceptionInterface
-{
-}
+interface ContainerExceptionInterface extends PsrContainerExceptionInterface {}
