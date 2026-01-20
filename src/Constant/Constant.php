@@ -33,8 +33,12 @@ final class Constant
     public const string DEFAULT = 'default';
     public const string PHPEXT = '.php';
     public const string CLASSNAME = 'classname';
+    public const string _CLASSNAME = '_' . self::CLASSNAME;
     public const string WEB = 'web';
+    public const string CONTROLLER = 'controller';
+    public const string _CONTROLLER = '_' . self::CONTROLLER;
     public const string METHOD = 'method';
+    public const string _METHOD = '_' . self::METHOD;
     public const string METHOD_GET = 'GET';
     public const string METHOD_POST = 'POST';
     public const string ARGUMENTS = 'arguments';
