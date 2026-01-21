@@ -21,7 +21,7 @@ interface KernelInterface
     /**
      * Configures the system (container, security, routes).
      */
-    public function configure(): self;
+    public function configure(): void;
 
     /**
      * Handles a Request and converts it into a Response.
