@@ -16,20 +16,14 @@ interface MiddlewareStackInterface
 {
     /**
      * Adds a middleware to the end of the stack (executed last before the controller).
-     *
-     * @param MiddlewareInterface $middleware
-     * @return self
      */
-    public function add(MiddlewareInterface $middleware): self;
+    public function add(MiddlewareInterface $middleware): static;
 
     /**
      * Adds a middleware to the beginning of the stack (executed first).
      * Useful for critical middlewares (e.g., ErrorHandler, Logger).
-     *
-     * @param MiddlewareInterface $middleware
-     * @return self
      */
-    public function prepend(MiddlewareInterface $middleware): self;
+    public function prepend(MiddlewareInterface $middleware): static;
 
     /**
      * Returns the ordered list of middlewares.

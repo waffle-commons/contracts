@@ -16,7 +16,7 @@ interface KernelInterface
     /**
      * Boots the kernel and initializes environment/configuration.
      */
-    public function boot(): self;
+    public function boot(): static;
 
     /**
      * Configures the system (container, security, routes).
