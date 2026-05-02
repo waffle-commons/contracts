@@ -17,5 +17,10 @@ interface ArgumentResolverInterface
      * @param array<string, mixed> $routeParams Route parameters from the matched route.
      * @return array<int, mixed> Resolved arguments in order.
      */
-    public function resolve(string|object $controller, string $method, ServerRequestInterface $request, array $routeParams): array;
+    public function resolve(
+        string|object $controller,
+        string $method,
+        ServerRequestInterface $request,
+        array $routeParams,
+    ): array;
 }
