@@ -9,7 +9,7 @@ use Waffle\Commons\Contracts\Container\ContainerInterface;
 
 interface RouterInterface
 {
-    public function boot(ContainerInterface $container): self;
+    public function boot(ContainerInterface $container): static;
 
     /**
      * Matches the current request against registered routes.

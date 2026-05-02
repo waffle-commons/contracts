@@ -8,5 +8,5 @@ use Waffle\Commons\Contracts\Core\KernelInterface;
 
 interface SystemInterface
 {
-    public function boot(KernelInterface $kernel): self;
+    public function boot(KernelInterface $kernel): static;
 }

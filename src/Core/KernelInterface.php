@@ -16,12 +16,12 @@ interface KernelInterface
     /**
      * Boots the kernel and initializes environment/configuration.
      */
-    public function boot(): self;
+    public function boot(): static;
 
     /**
      * Configures the system (container, security, routes).
      */
-    public function configure(): self;
+    public function configure(): void;
 
     /**
      * Handles a Request and converts it into a Response.
@@ -30,4 +30,10 @@ interface KernelInterface
      * @return ResponseInterface The generated HTTP response.
      */
     public function handle(ServerRequestInterface $request): ResponseInterface;
+
+    /**
+     * Clean application state between two requests.
+     * Necessary to avoid data leaks between requests (User Context) in Worker mode.
+     */
+    public function reset(): void;
 }

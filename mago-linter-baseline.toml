@@ -7,6 +7,24 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
+file = "src/Constant/Constant.php"
+code = "constant-name"
+message = "Constant name `_CLASSNAME` should be in constant case."
+count = 1
+
+[[issues]]
+file = "src/Constant/Constant.php"
+code = "constant-name"
+message = "Constant name `_CONTROLLER` should be in constant case."
+count = 1
+
+[[issues]]
+file = "src/Constant/Constant.php"
+code = "constant-name"
+message = "Constant name `_METHOD` should be in constant case."
+count = 1
+
+[[issues]]
 file = "tests/src/AbstractTestCase.php"
 code = "no-redundant-method-override"
 message = "Redundant method override."

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Waffle\Commons\Contracts\Container;
 
 use Psr\Container\ContainerInterface as PsrContainerInterface;
+use Waffle\Commons\Contracts\Service\ResettableInterface;
 
 /**
  * Interface for the Waffle service container.
  */
-interface ContainerInterface extends PsrContainerInterface
+interface ContainerInterface extends PsrContainerInterface, ResettableInterface
 {
     /**
      * Finds an entry of the container by its identifier and returns it.
