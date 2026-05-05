@@ -12,5 +12,5 @@ interface ConfigInterface
 
     public function getArray(string $key, ?array $default = null): ?array;
 
-    public function getBool(string $key, bool $default = false): bool;
+    public function getBool(string $key, ?bool $default = null): ?bool;
 }
