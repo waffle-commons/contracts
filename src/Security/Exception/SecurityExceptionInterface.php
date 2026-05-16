@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Waffle\Commons\Contracts\Security\Exception;
 
-interface SecurityExceptionInterface
+use Throwable;
+
+interface SecurityExceptionInterface extends Throwable
 {
     /**
      * @return array<string, mixed>
