@@ -14,26 +14,12 @@ interface RouterInterface
     /**
      * Matches the current request against registered routes.
      *
-     * @param ServerRequestInterface $request
-     * @return array{
-     *        classname: class-string,
-     *        method: string,
-     *        arguments: array<string, mixed>,
-     *        path: string,
-     *        name: non-falsy-string,
-     *        params?: array<string, mixed>
-     *   }|null Returns the route array if matched, null otherwise.
+     * @return MatchedRoute|null Returns the matched route DTO if a match is found, null otherwise.
      */
-    public function matchRequest(ServerRequestInterface $request): ?array;
+    public function matchRequest(ServerRequestInterface $request): ?MatchedRoute;
 
     /**
-     * @return array<array-key, array{
-     *       classname: class-string,
-     *       method: string,
-     *       arguments: array<string, mixed>,
-     *       path: string,
-     *       name: non-falsy-string
-     *  }>
+     * @return list<MatchedRoute> All discovered routes in declaration order.
      */
     public function getRoutes(): array;
 }
