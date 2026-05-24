@@ -21,6 +21,8 @@ final readonly class MatchedRoute
      * @param non-falsy-string     $path      Original route path pattern (e.g. "/users/{id}").
      * @param non-falsy-string     $name      Route name from #[Route(name: ...)].
      * @param array<string, mixed> $params    Extracted path-parameter values for this request.
+     * @param int                  $priority  Higher matches first; negative values (e.g. -1000)
+     *                                        flag catch-all routes that must match last.
      */
     public function __construct(
         public string $className,
@@ -29,6 +31,7 @@ final readonly class MatchedRoute
         public string $path,
         public string $name,
         public array $params = [],
+        public int $priority = 0,
     ) {}
 
     /**
@@ -47,6 +50,7 @@ final readonly class MatchedRoute
             path: $this->path,
             name: $this->name,
             params: $params,
+            priority: $this->priority,
         );
     }
 }
