@@ -9,11 +9,18 @@
 Waffle Contracts Component
 ==========================
 
-> **Release:** `v0.1.0-beta0` — the contracts surface is frozen for Beta 0.
+> **Release:** `v0.1.0-beta1`
 
 The Waffle Framework's central contract package. Every other `waffle-commons/*` component depends **only** on this package and on its declared PSR interfaces. No component may depend on a sibling's concrete implementation — `contracts` is the line that keeps the ecosystem decoupled.
 
-This package contains exclusively interfaces, attributes, enums, exception interfaces, and typed constants. No business logic ever ships from here.
+This package contains interfaces, attributes, enums, exception interfaces, typed constants — and, starting with Beta-1, the single concrete `RouteNotFoundException` shared across components. No business logic ever ships from here.
+
+## 🆕 Beta-1 changelog (one breaking change, three additions)
+
+- **BREAKING** — `Waffle\Commons\Contracts\Security\Csrf\CsrfTokenManagerInterface::issue()`, `validate()`, and `refresh()` now take a `$sessionId` argument. The HMAC binds tokens to the per-browser `WAFFLE_SID` cookie issued by `AnonymousSessionMiddleware`.
+- **NEW** — `Waffle\Commons\Contracts\Security\Attribute\PublicAccess` — explicit opt-out for the new fail-closed ABAC default. Without `#[Voter]` and without `#[PublicAccess]`, `SecureContainer::analyze()` denies with HTTP `403`.
+- **NEW** — `Waffle\Commons\Contracts\Routing\Exception\RouteNotFoundException` — concrete `final` class that implements the existing `RouteNotFoundExceptionInterface`. Thrown by `CoreRoutingMiddleware` so missing routes render as `404` instead of `500`.
+- **NEW** — CSRF binding constants on `Waffle\Commons\Contracts\Security\Csrf\Constant`: `SESSION_COOKIE_NAME` (`WAFFLE_SID`), `SESSION_ID_BYTES` (`32`), `SESSION_REQUEST_ATTRIBUTE` (`_anon_sid`), `SESSION_COOKIE_MAX_AGE` (`2_592_000`), plus `MIN_SECRET_BYTES` (`32`) and `SECRET_ENV_KEY` (`WAFFLE_CSRF_SECRET`).
 
 ## 📦 Installation
 

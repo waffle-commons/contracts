@@ -90,6 +90,8 @@ kan-defect = { enabled = false }
 halstead = { enabled = false }
 prefer-arrow-function = { enabled = false }
 no-redundant-nullsafe = { enabled = false }
+# DTOs in contracts model exact data shapes — collapsing fields defeats their purpose.
+excessive-parameter-list = { enabled = false }
 # <<< alpha6-opinionated-suppressions
 
 [analyzer]
