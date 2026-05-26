@@ -23,6 +23,7 @@ final readonly class MatchedRoute
      * @param array<string, mixed> $params    Extracted path-parameter values for this request.
      * @param int                  $priority  Higher matches first; negative values (e.g. -1000)
      *                                        flag catch-all routes that must match last.
+     * @param array<string>        $methods   Allowed HTTP methods for this route.
      */
     public function __construct(
         public string $className,
@@ -32,6 +33,7 @@ final readonly class MatchedRoute
         public string $name,
         public array $params = [],
         public int $priority = 0,
+        public array $methods = [],
     ) {}
 
     /**
@@ -51,6 +53,7 @@ final readonly class MatchedRoute
             name: $this->name,
             params: $params,
             priority: $this->priority,
+            methods: $this->methods,
         );
     }
 }
