@@ -9,18 +9,27 @@
 Waffle Contracts Component
 ==========================
 
-> **Release:** `v0.1.0-beta1`
+> **Release:** `v0.1.0-beta2` &nbsp;|&nbsp; [`CHANGELOG.md`](./CHANGELOG.md)
 
 The Waffle Framework's central contract package. Every other `waffle-commons/*` component depends **only** on this package and on its declared PSR interfaces. No component may depend on a sibling's concrete implementation — `contracts` is the line that keeps the ecosystem decoupled.
 
-This package contains interfaces, attributes, enums, exception interfaces, typed constants — and, starting with Beta-1, the single concrete `RouteNotFoundException` shared across components. No business logic ever ships from here.
+This package contains interfaces, attributes, enums, exception interfaces, typed constants, and the small set of concrete routing exceptions (`RouteNotFoundException`, `MethodNotAllowedException`) shared across components. No business logic ever ships from here.
 
-## 🆕 Beta-1 changelog (one breaking change, three additions)
+## 🆕 Beta-2 highlights — HTTP method correctness
 
-- **BREAKING** — `Waffle\Commons\Contracts\Security\Csrf\CsrfTokenManagerInterface::issue()`, `validate()`, and `refresh()` now take a `$sessionId` argument. The HMAC binds tokens to the per-browser `WAFFLE_SID` cookie issued by `AnonymousSessionMiddleware`.
-- **NEW** — `Waffle\Commons\Contracts\Security\Attribute\PublicAccess` — explicit opt-out for the new fail-closed ABAC default. Without `#[Voter]` and without `#[PublicAccess]`, `SecureContainer::analyze()` denies with HTTP `403`.
-- **NEW** — `Waffle\Commons\Contracts\Routing\Exception\RouteNotFoundException` — concrete `final` class that implements the existing `RouteNotFoundExceptionInterface`. Thrown by `CoreRoutingMiddleware` so missing routes render as `404` instead of `500`.
-- **NEW** — CSRF binding constants on `Waffle\Commons\Contracts\Security\Csrf\Constant`: `SESSION_COOKIE_NAME` (`WAFFLE_SID`), `SESSION_ID_BYTES` (`32`), `SESSION_REQUEST_ATTRIBUTE` (`_anon_sid`), `SESSION_COOKIE_MAX_AGE` (`2_592_000`), plus `MIN_SECRET_BYTES` (`32`) and `SECRET_ENV_KEY` (`WAFFLE_CSRF_SECRET`).
+- **NEW** — `Waffle\Commons\Contracts\Routing\Exception\MethodNotAllowedException` (concrete `final` class) and its `MethodNotAllowedExceptionInterface` marker. Carries the allowed-methods list so downstream renderers can emit the RFC 7231 `Allow` header on `405` responses.
+- **NEW** — `Waffle\Commons\Contracts\Routing\Constant`: HTTP-method string constants (`METHOD_GET`, `METHOD_POST`, `METHOD_PUT`, `METHOD_PATCH`, `METHOD_DELETE`, `METHOD_HEAD`, `METHOD_OPTIONS`).
+- **CHANGED** — `Waffle\Commons\Contracts\Routing\Attribute\Route` (relocated from `waffle-commons/routing` in Beta-2): gained the `array $methods = ['GET']` parameter for method filtering and route overloading. Constructor argument order normalised so `$path` precedes `$methods`. Empty `methods` array means "any method".
+- **NEW** — `Waffle\Commons\Contracts\Exception\WaffleExceptionInterface`: explicit base interface for the framework's exception hierarchy.
+
+## Beta-1 inheritance
+
+The Beta-1 line introduced the security and HTTP-correctness foundations this package still carries:
+
+- **BREAKING (Beta-1)** — `CsrfTokenManagerInterface::issue()`, `validate()`, `refresh()` take a `$sessionId` argument. The HMAC binds tokens to the per-browser `WAFFLE_SID` cookie issued by `AnonymousSessionMiddleware`.
+- **NEW (Beta-1)** — `Waffle\Commons\Contracts\Security\Attribute\PublicAccess` — explicit opt-out for the fail-closed ABAC default. Without `#[Voter]` and without `#[PublicAccess]`, `SecureContainer::analyze()` denies with HTTP `403`.
+- **NEW (Beta-1)** — `Waffle\Commons\Contracts\Routing\Exception\RouteNotFoundException` — concrete `final` class implementing `RouteNotFoundExceptionInterface`. Thrown by `CoreRoutingMiddleware` so missing routes render as `404` instead of `500`.
+- **NEW (Beta-1)** — CSRF binding constants on `Waffle\Commons\Contracts\Security\Csrf\Constant`: `SESSION_COOKIE_NAME` (`WAFFLE_SID`), `SESSION_ID_BYTES` (`32`), `SESSION_REQUEST_ATTRIBUTE` (`_anon_sid`), `SESSION_COOKIE_MAX_AGE` (`2_592_000`), plus `MIN_SECRET_BYTES` (`32`) and `SECRET_ENV_KEY` (`WAFFLE_CSRF_SECRET`).
 
 ## 📦 Installation
 
@@ -131,6 +140,18 @@ final readonly class UserLoginDto
 ## 🤝 Decoupling rule
 
 Every concrete waffle-commons component **must** depend on `waffle-commons/contracts` and on nothing else from the `waffle-commons/*` namespace, unless explicitly declared in its own `composer.json require`. This rule is enforced at build time by `mago guard` perimeters in every component.
+
+## 🧭 Architectural boundary (`mago guard`)
+
+`contracts` is the **root** of the ecosystem, so its own perimeter (enforced by `vendor/bin/mago guard`, bundled into `composer mago`, zero baselines — see [`mago.toml`](./mago.toml) `[guard.perimeter]`) is the strictest of all: production code under `Waffle\Commons\Contracts` may depend **only** on:
+
+- `Waffle\Commons\Contracts\**` — itself
+- `Psr\**` — PSR interfaces
+- `@global` + `Psl\**` — PHP core and the PHP Standard Library
+
+It depends on **no other `waffle-commons/*` package** — that is what lets every other component depend on it without creating a cycle. Test code under `WaffleTests\Commons\Contracts` is unrestricted (`@all`).
+
+Structural rules are guarded too: interfaces must be named `*Interface`, `Exception\**` classes must end in `*Exception`, and any `Enum\**` namespace may hold only `enum` declarations (see the [Decoupling rule](#-decoupling-rule) above for the ecosystem-wide counterpart).
 
 ## 🧪 Testing
 
