@@ -15,6 +15,7 @@ Released in lockstep with the Waffle Commons umbrella tag.
 - `Waffle\Commons\Contracts\Routing\Constant`: HTTP method string constants (`METHOD_GET`, `METHOD_POST`, `METHOD_PUT`, `METHOD_PATCH`, `METHOD_DELETE`, `METHOD_HEAD`, `METHOD_OPTIONS`).
 - `Waffle\Commons\Contracts\Routing\MatchedRoute`: minor refinement (additional metadata fields).
 - `Waffle\Commons\Contracts\Exception\WaffleExceptionInterface`: explicit base interface for the framework's exception hierarchy.
+- `Waffle\Commons\Contracts\Runtime\AuditRunnerInterface`: contract for running an external audit script and streaming its output line-by-line — `run(string $scriptPath, string $workingDirectory, array $arguments, Closure $onLine): int`. Backs the new `igor:audit` console command; the concrete `ProcessAuditRunner` lives in `waffle-commons/runtime`, so `console` gains no dependency edge (mirrors the `MigrationRunnerInterface` arrangement).
 
 ### Changed
 - `Route` attribute constructor parameter order reordered (`$path` first, `$methods` second); pre-existing call sites already used named arguments, so no source-level breakage in the ecosystem.
