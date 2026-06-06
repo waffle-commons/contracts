@@ -5,7 +5,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
-## [Unreleased] — targeting `0.1.0-beta2`
+## [Unreleased] — targeting `0.1.0-beta3`
+
+**Theme: identity federation & stateless persistence (RFC-021 / RFC-022 contract surface).**
+
+### Added
+- **Auth (RFC-021)** — `Auth\Assertion\{UserAssertionInterface, AssertionSignerInterface, AssertionVerifierInterface}` formalising the Gateway Assertion Protocol (`X-Wfl-Assert-User`), plus the dedicated auth exception marker interfaces consumed by the RFC 7807 error handler.
+- **Data / SQR (RFC-022)** — `Data\Enum\{Direction, Operator}`, the `Data\Query\{ComparisonInterface, OrderInterface}` predicate contracts, the repository read surface (`Data\Repository\RepositoryInterface`) and the data-layer exception interfaces (`DatabaseExceptionInterface`, `SecurityPathViolationExceptionInterface`, `UnauthenticatedAccessExceptionInterface`).
+- `Data\Warmup\DataWarmerInterface` — CLI-side artifact warmer behind the new `data:warmup` console command: pre-compiles SQR trees / routing tables into OPcache shared memory; implementations must be stateless and idempotent.
+- `Runtime\AuditRunnerInterface` — contract for running an external audit script and streaming its output line-by-line (`run(string $scriptPath, string $workingDirectory, array $arguments, Closure $onLine): int`). Backs the new `igor:audit` console command; the concrete `ProcessAuditRunner` lives in `waffle-commons/runtime`, so `console` gains no dependency edge (mirrors the `MigrationRunnerInterface` arrangement).
+- `Core\TerminableInterface` — post-response teardown hook implemented by the kernel for FrankenPHP worker-loop hygiene.
+
+### Changed
+- Lockstep version bump; `composer.lock` refreshed with the beta-3 dependency wave.
+
+## [0.1.0-beta2] — 2026-05-29
 
 **Theme: HTTP correctness — typed contracts for 405 Method Not Allowed.**
 
@@ -15,7 +29,6 @@ Released in lockstep with the Waffle Commons umbrella tag.
 - `Waffle\Commons\Contracts\Routing\Constant`: HTTP method string constants (`METHOD_GET`, `METHOD_POST`, `METHOD_PUT`, `METHOD_PATCH`, `METHOD_DELETE`, `METHOD_HEAD`, `METHOD_OPTIONS`).
 - `Waffle\Commons\Contracts\Routing\MatchedRoute`: minor refinement (additional metadata fields).
 - `Waffle\Commons\Contracts\Exception\WaffleExceptionInterface`: explicit base interface for the framework's exception hierarchy.
-- `Waffle\Commons\Contracts\Runtime\AuditRunnerInterface`: contract for running an external audit script and streaming its output line-by-line — `run(string $scriptPath, string $workingDirectory, array $arguments, Closure $onLine): int`. Backs the new `igor:audit` console command; the concrete `ProcessAuditRunner` lives in `waffle-commons/runtime`, so `console` gains no dependency edge (mirrors the `MigrationRunnerInterface` arrangement).
 
 ### Changed
 - `Route` attribute constructor parameter order reordered (`$path` first, `$methods` second); pre-existing call sites already used named arguments, so no source-level breakage in the ecosystem.
