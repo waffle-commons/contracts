@@ -55,7 +55,7 @@ composer require waffle-commons/contracts
 | `Waffle\Commons\Contracts\EventDispatcher` | `EventDispatcherInterface`, `ListenerProviderInterface` (PSR-14 extension). |
 | `Waffle\Commons\Contracts\Exception` | Root exception interfaces (`ValidationExceptionInterface`, etc.). |
 | `Waffle\Commons\Contracts\Handler` | `ArgumentResolverInterface`, `ResponseConverterInterface`. |
-| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`ResponseEmitterInterface`, `ServerRequestFactoryInterface`). |
+| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`GlobalsFactoryInterface`, `ResponseEmitterInterface`, `ServerRequestFactoryInterface`). |
 | `Waffle\Commons\Contracts\Parser` | `YamlParserInterface`. |
 | `Waffle\Commons\Contracts\Pipeline` | `MiddlewareStackInterface` (PSR-15 stack). |
 | `Waffle\Commons\Contracts\Routing` | `RouterInterface` + routing exception interfaces. |
