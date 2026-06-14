@@ -10,7 +10,7 @@
 Waffle Contracts Component
 ==========================
 
-> **Release:** `0.1.0-beta3` &nbsp;|&nbsp; [`CHANGELOG.md`](./CHANGELOG.md)
+> **Release:** `0.1.0-beta4` &nbsp;|&nbsp; [`CHANGELOG.md`](./CHANGELOG.md)
 
 The Waffle Framework's central contract package. Every other `waffle-commons/*` component depends **only** on this package and on its declared PSR interfaces. No component may depend on a sibling's concrete implementation — `contracts` is the line that keeps the ecosystem decoupled.
 
@@ -55,7 +55,7 @@ composer require waffle-commons/contracts
 | `Waffle\Commons\Contracts\EventDispatcher` | `EventDispatcherInterface`, `ListenerProviderInterface` (PSR-14 extension). |
 | `Waffle\Commons\Contracts\Exception` | Root exception interfaces (`ValidationExceptionInterface`, etc.). |
 | `Waffle\Commons\Contracts\Handler` | `ArgumentResolverInterface`, `ResponseConverterInterface`. |
-| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`ResponseEmitterInterface`, `ServerRequestFactoryInterface`). |
+| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`GlobalsFactoryInterface`, `ResponseEmitterInterface`, `ServerRequestFactoryInterface`). |
 | `Waffle\Commons\Contracts\Parser` | `YamlParserInterface`. |
 | `Waffle\Commons\Contracts\Pipeline` | `MiddlewareStackInterface` (PSR-15 stack). |
 | `Waffle\Commons\Contracts\Routing` | `RouterInterface` + routing exception interfaces. |

@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
+## [0.1.0-beta4] — 2026-06-13
+
+**Theme: security hardening, worker-mode diagnostics & DX (RC-readiness groundwork).**
+
+### Added
+- `Validation\SelfValidatingInterface` — opt-in `assertValid()` contract behind the injectable, mockable validator (DX-05).
+- `Data\Connection\ConnectionTrackerInterface` (extends `ResettableInterface`) and the `Data\Connection\ConnectionKind` enum — the orphaned-connection tracer port (DIAG-03).
+- `Handler\ResponseFactoryAwareInterface` — interface-based response-factory injection for controllers (ARCH-05).
+- `Http\GlobalsFactoryInterface` — the "build a PSR-7 request from the ambient SAPI/superglobals" port, letting `runtime` depend on the abstraction instead of `http`'s concrete `GlobalsFactory` (perimeter remediation).
+
+### Changed
+- Worker-safety migration to igor-php 0.7 (`#[WorkerSafe]`).
+
 ## [0.1.0-beta3] — 2026-06-07
 
 **Theme: identity federation & stateless persistence (RFC-021 / RFC-022 contract surface).**
