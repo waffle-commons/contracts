@@ -5,6 +5,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
+## [0.1.0-beta5] — 2026-07-08
+
+**Theme: Beta5 contract surface — telemetry, async & context-aware authorization.**
+
+### Added
+- **Telemetry / observability (OBS-01 · RFC-005)** — contract-first tracing surface, SDK-free: `Telemetry\TracerInterface` (start/activate a span, expose the active context), `Telemetry\SpanInterface`, `Telemetry\SpanContextInterface` (immutable W3C Trace Context — `traceId` / `spanId` / `traceFlags` / `traceState` / `toTraceparent`), `Telemetry\TextMapPropagatorInterface` (inject/extract across a header carrier), plus the `Telemetry\Enum\{SpanKind, SpanStatus}` enums. Ships zero-overhead no-op defaults so the core depends only on the contract: `Telemetry\{NullTracer, NullSpan, NullSpanContext, NullTextMapPropagator}`. The real OpenTelemetry binding lives in `waffle-commons/telemetry-otel` — the SDK never enters the contracts perimeter.
+- **Metrics ports (OBS-01 · RFC-005)** — `Telemetry\Metrics\MetricsRegistryInterface` (`increment` / `observe` / `gauge`, worker-state-out-of-heap mandate), `Telemetry\Metrics\MetricsCollectorInterface` (stateless scrape-time sampling), `Telemetry\Metrics\PoolStatsInterface` (live connection-pool utilisation for `/waffle-metrics`), the `Telemetry\Metrics\MetricSample` value object and `Telemetry\Metrics\Enum\MetricType` enum (counter / gauge / histogram), plus the no-op `Telemetry\Metrics\NullMetricsRegistry` default.
+- **Async finish-request deferral (ASYNC-01 · RFC-015)** — `Async\TaskRunnerInterface` (extends `ResettableInterface`: `defer` / `run` / `pending` — bounded per-request budget, Fiber-isolated drain at finish-request), `Async\DeferredTaskInterface` (a self-contained, bounded unit of post-response work), and the deferral exception markers `Async\Exception\AsyncExceptionInterface` and `Async\Exception\DeferralBudgetExceededExceptionInterface` (the explicit "move it to a real queue" signal, exposing `budget()`).
+- **Concurrent HTTP client / promises (ASYNC-02)** — `HttpClient\ConcurrentClientInterface` (parallel `sendRequests` batch + non-blocking `promise`), `HttpClient\PromiseInterface` (`then` / `catch` settle callbacks + blocking `wait`), and the `HttpClient\Enum\PromiseState` enum (pending / fulfilled / rejected).
+- **Connection-pool ports (DBAL-01/02 · RFC-022)** — backend-neutral pooling: `Data\Connection\ConnectionPoolInterface` (heal-on-lease `acquire` / `release`), `Data\Connection\ConnectionInterface` (`kind` / `isAlive` / `id`), the narrowed `Data\Connection\RelationalConnectionPoolInterface` (typed `PdoConnectionInterface` acquire + request-scoped `beginRequestScope` / `endRequestScope` for one-transaction-per-request) and `Data\Connection\RedisConnectionPoolInterface`, plus the typed handle accessors `Data\Connection\{PdoConnectionInterface, RedisConnectionInterface}`.
+- **Reactive broadcast ports (REACTIVE-01 · RFC-018)** — the `#[Reactive\Attribute\Broadcast]` property attribute, `Reactive\BroadcastBufferInterface` (extends `ResettableInterface`: request-scoped, I/O-free `record` + finish-request `drain`), `Reactive\BroadcastTransportInterface` (SSE / Mercure sink — `push` / `pushBatch`), and the immutable `Reactive\MutationRecord` value object.
+- **WebAuthn / passkeys (AUTH-01 · RFC-021)** — `Auth\WebAuthn\WebAuthnVerifierInterface` (stateless attestation/assertion verification wrapping `web-auth/webauthn-lib`) with its supporting surface: `Auth\WebAuthn\{WebAuthnUserInterface, CredentialRepositoryInterface, RegisteredCredentialInterface, RegistrationOptionsInterface, AssertionOptionsInterface}` and the exception markers `Auth\WebAuthn\Exception\{WebAuthnExceptionInterface, InvalidWebAuthnRegistrationExceptionInterface, InvalidWebAuthnAssertionExceptionInterface}`.
+- **AOT container (AOT-01 · RFC-019)** — `Container\CompiledContainerInterface` (extends `ContainerInterface`): marker for the build-time, reflection-free compiled container that must produce a service graph identical to the runtime container and remains a drop-in fallback.
+
+### Changed
+- **Context-aware authorization (AUTHZ-01)** — `Security\VoterInterface::decide()` now takes a request-scoped `Auth\SecurityContextInterface $ctx` (identity, roles, client IP) plus an optional `mixed $subject` (the resource under decision, or the PSR-7 request), replacing the prior context-free signature. This unlocks ownership / IDOR / ABAC rules expressed against the authenticated identity. Voters MUST remain stateless — read everything from `$ctx` / `$subject` — and the fail-closed deny-by-default contract is preserved.
+
+### Dependencies
+- Lockstep version bump; `composer.lock` refreshed with the beta-5 dependency wave.
+
 ## [0.1.0-beta4] — 2026-06-13
 
 **Theme: security hardening, worker-mode diagnostics & DX (RC-readiness groundwork).**
