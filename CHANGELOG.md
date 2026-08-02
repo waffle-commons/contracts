@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
+## [0.1.0-beta6] — 2026-08-03
+
+**Theme: stabilisation — object-level ABAC seam.**
+
+### Added
+- `Security\SubjectResolverInterface` — resolves the domain subject a route parameter identifies, so voters can express object-level (anti-IDOR) rules. Resolution is lazy, voter-gated and fail-closed at the consumer (SEC-05).
+
+### Fixed
+- `#[PublicAccess]` is restricted to `Attribute::TARGET_METHOD`. Class-level placement silently exempted every method of a controller, including ones added later (Beta6 audit SEC-05).
+
+### Documentation
+- The README now links into the central Diátaxis documentation tree (DOC-02).
+
 ## [0.1.0-beta5] — 2026-07-08
 
 **Theme: Beta5 contract surface — telemetry, async & context-aware authorization.**
