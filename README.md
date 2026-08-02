@@ -160,6 +160,13 @@ Structural rules are guarded too: interfaces must be named `*Interface`, `Except
 docker exec -w /waffle-commons/contracts waffle-dev composer tests
 ```
 
+## 📚 Documentation
+
+Full guides live in the central Diátaxis documentation tree:
+
+- [Reference — `waffle-commons/contracts`](https://github.com/waffle-commons/documentation/blob/main/reference/contracts.md)
+- [Documentation home](https://github.com/waffle-commons/documentation)
+
 ## 📄 License
 
 MIT — see [LICENSE.md](./LICENSE.md).
