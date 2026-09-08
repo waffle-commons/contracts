@@ -1,0 +1,9 @@
+{
+    "exclude": [
+        "vendor",
+        "tests",
+        "var"
+    ],
+    "safe_namespaces": [],
+    "verbose": false
+}

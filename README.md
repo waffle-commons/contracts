@@ -10,7 +10,7 @@
 Waffle Contracts Component
 ==========================
 
-> **Release:** `0.1.0-beta5` &nbsp;|&nbsp; [`CHANGELOG.md`](./CHANGELOG.md)
+> **Release:** `0.1.0-beta6` &nbsp;|&nbsp; [`CHANGELOG.md`](./CHANGELOG.md)
 
 The Waffle Framework's central contract package. Every other `waffle-commons/*` component depends **only** on this package and on its declared PSR interfaces. No component may depend on a sibling's concrete implementation — `contracts` is the line that keeps the ecosystem decoupled.
 
@@ -159,6 +159,13 @@ Structural rules are guarded too: interfaces must be named `*Interface`, `Except
 ```bash
 docker exec -w /waffle-commons/contracts waffle-dev composer tests
 ```
+
+## 📚 Documentation
+
+Full guides live in the central Diátaxis documentation tree:
+
+- [Reference — `waffle-commons/contracts`](https://github.com/waffle-commons/documentation/blob/main/reference/contracts.md)
+- [Documentation home](https://github.com/waffle-commons/documentation)
 
 ## 📄 License
 
