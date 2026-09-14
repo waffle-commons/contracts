@@ -1298,16 +1298,16 @@
         },
         {
             "name": "carthage-software/mago",
-            "version": "1.47.5",
+            "version": "1.48.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "3d6c87dccaa74b4048b90e208abe7f2832114f2e"
+                "reference": "4b833d559b9fc21da7c49a2458d0d057d9b2227a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/3d6c87dccaa74b4048b90e208abe7f2832114f2e",
-                "reference": "3d6c87dccaa74b4048b90e208abe7f2832114f2e",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/4b833d559b9fc21da7c49a2458d0d057d9b2227a",
+                "reference": "4b833d559b9fc21da7c49a2458d0d057d9b2227a",
                 "shasum": ""
             },
             "require": {
@@ -1349,7 +1349,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.47.5"
+                "source": "https://github.com/carthage-software/mago/tree/1.48.1"
             },
             "funding": [
                 {
@@ -1357,7 +1357,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-02T16:54:06+00:00"
+            "time": "2026-09-11T05:32:18+00:00"
         },
         {
             "name": "composer/pcre",
