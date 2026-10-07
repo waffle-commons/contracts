@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
+## [Unreleased]
+
+### Added
+- `Core\KernelInterface::$container` — a readable `public ContainerInterface $container { get; }`, so a test bridge (`waffle-commons/testing`, TEST-01) can swap in test doubles between `boot()` and `configure()` without importing the kernel's concrete classes (CARRY-04). **BC for direct implementers:** a class that implements `KernelInterface` itself must now expose a public readable `$container`; `waffle`'s `AbstractKernel` already does, so kernels that extend it are unaffected.
+- `psr/clock` (PSR-20) joins the requirements, so the whole ecosystem shares one clock contract; new beta7 code takes the clock by injection (CARRY-04).
+
 ## [0.1.0-beta6] — 2026-09
 
 **Theme: stabilisation — object-level ABAC seam.**
