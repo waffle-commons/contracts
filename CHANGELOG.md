@@ -10,6 +10,7 @@ Released in lockstep with the Waffle Commons umbrella tag.
 ### Added
 - `Core\KernelInterface::$container` — a readable `public ContainerInterface $container { get; }`, so a test bridge (`waffle-commons/testing`, TEST-01) can swap in test doubles between `boot()` and `configure()` without importing the kernel's concrete classes (CARRY-04). **BC for direct implementers:** a class that implements `KernelInterface` itself must now expose a public readable `$container`; `waffle`'s `AbstractKernel` already does, so kernels that extend it are unaffected.
 - `psr/clock` (PSR-20) joins the requirements, so the whole ecosystem shares one clock contract; new beta7 code takes the clock by injection (CARRY-04).
+- `Attribute\ListOf` — declares the element type of a list-typed DTO member: `#[ListOf(OrderLine::class)]` for a `#[Dto]` class or a backed enum, `#[ListOf('string')]` for a scalar. PHP has no generics, so the build-time DTO-shape reader in `waffle-commons/utils` reads it, and the serializer and the OpenAPI generator agree on what a list holds (API-01/API-02, RFC-016).
 
 ## [0.1.0-beta6] — 2026-09
 
