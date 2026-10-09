@@ -11,6 +11,17 @@ Released in lockstep with the Waffle Commons umbrella tag.
 - `Core\KernelInterface::$container` — a readable `public ContainerInterface $container { get; }`, so a test bridge (`waffle-commons/testing`, TEST-01) can swap in test doubles between `boot()` and `configure()` without importing the kernel's concrete classes (CARRY-04). **BC for direct implementers:** a class that implements `KernelInterface` itself must now expose a public readable `$container`; `waffle`'s `AbstractKernel` already does, so kernels that extend it are unaffected.
 - `psr/clock` (PSR-20) joins the requirements, so the whole ecosystem shares one clock contract; new beta7 code takes the clock by injection (CARRY-04).
 - `Attribute\ListOf` — declares the element type of a list-typed DTO member: `#[ListOf(OrderLine::class)]` for a `#[Dto]` class or a backed enum, `#[ListOf('string')]` for a scalar. PHP has no generics, so the build-time DTO-shape reader in `waffle-commons/utils` reads it, and the serializer and the OpenAPI generator agree on what a list holds (API-01/API-02, RFC-016).
+- **`Queue\` — background processing contracts (QUEUE-01, RFC-015):**
+  - `MessageInterface` — a job: a strictly typed DTO that crosses the queue as JSON and is rebuilt through its constructor; delivery is at least once.
+  - `Envelope` — the message plus what delivery needs: a stable id (handlers de-duplicate on it), the queue, `availableAt`, the failed `attempts`, the W3C trace context of the dispatcher, and the transport's receipt of the current delivery. Immutable from outside (`private(set)`, validating hooks); `withReceipt()` and `withNextAttempt()` return copies.
+  - `QueueDispatcherInterface::dispatch()`, with an optional queue and `availableAt` for delayed work.
+  - `QueueConsumerInterface` — `receive()` with a bounded wait, then `acknowledge()` or `release()`; an unsettled delivery is reclaimed, never lost.
+  - `FailedMessageStoreInterface` and `FailedMessage` — the dead-letter store: the full envelope, the failure reason and the instant.
+  - `Exception\QueueExceptionInterface` — transport failures.
+- **`Mailer\` — the mailer contract (QUEUE-03):** `MailerInterface::send()`, the `Email` DTO and `Exception\MailerExceptionInterface`. `Email` is a `#[Dto]` and a queue message, so transactional mail is dispatched to a worker. Its hooks validate every address and keep CR/LF out of the subject (no header injection). SMTP and API transports stay post-v1.
+
+### Fixed
+- `psr/http-factory` ^1.1 is now a declared requirement. `Http\ServerRequestFactoryInterface` and `Handler\ResponseFactoryAwareInterface` use the PSR-17 interfaces, which were only installed through a development tool, so an install without development dependencies loaded interfaces whose parents were missing.
 
 ## [0.1.0-beta6] — 2026-09
 
