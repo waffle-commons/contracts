@@ -16,8 +16,15 @@ Released in lockstep with the Waffle Commons umbrella tag.
   - `Envelope` — the message plus what delivery needs: a stable id (handlers de-duplicate on it), the queue, `availableAt`, the failed `attempts`, the W3C trace context of the dispatcher, and the transport's receipt of the current delivery. Immutable from outside (`private(set)`, validating hooks); `withReceipt()` and `withNextAttempt()` return copies.
   - `QueueDispatcherInterface::dispatch()`, with an optional queue and `availableAt` for delayed work.
   - `QueueConsumerInterface` — `receive()` with a bounded wait, then `acknowledge()` or `release()`; an unsettled delivery is reclaimed, never lost.
-  - `FailedMessageStoreInterface` and `FailedMessage` — the dead-letter store: the full envelope, the failure reason and the instant.
+  - `FailedMessageStoreInterface` and `FailedMessage` — the dead-letter store: the full envelope, the failure reason and the instant. The envelope is kept as it would be delivered again, so its attempts count every failed delivery, the last one included.
   - `Exception\QueueExceptionInterface` — transport failures.
+- `Queue\MessageHandlerInterface` (QUEUE-02) — a worker's handler: `handles()` names the message class, `handle()`
+  receives the message and its envelope; throwing fails the delivery. The handled classes double as the only
+  classes a consumer rebuilds from a queue.
+- **`Serializer\` — the serializer seam (API-02):** `DtoSerializerInterface` (`supports`, `denormalize`,
+  `deserialize`, `serialize`) lets the controller argument resolver, the response converter and a queue driver
+  use the serializer without importing it; `Exception\SerializerExceptionInterface` marks its failures (the
+  exception code is the HTTP status).
 - **`Mailer\` — the mailer contract (QUEUE-03):** `MailerInterface::send()`, the `Email` DTO and `Exception\MailerExceptionInterface`. `Email` is a `#[Dto]` and a queue message, so transactional mail is dispatched to a worker. Its hooks validate every address and keep CR/LF out of the subject (no header injection). SMTP and API transports stay post-v1.
 
 ### Fixed

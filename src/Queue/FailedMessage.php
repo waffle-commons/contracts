@@ -13,7 +13,9 @@ use DateTimeImmutable;
 final readonly class FailedMessage
 {
     /**
-     * @param Envelope          $envelope The envelope of the last delivery: id, attempts, trace context.
+     * @param Envelope          $envelope The envelope as it would be delivered again: its id, its trace context,
+     *                                    and its attempts, which count every failed delivery, the last one
+     *                                    included.
      * @param string            $reason   Why the last delivery failed (the exception class and message).
      * @param DateTimeImmutable $failedAt When the message was given up on.
      */
