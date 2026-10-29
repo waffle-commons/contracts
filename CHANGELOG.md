@@ -5,7 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
-## [Unreleased]
+## [0.1.0-beta7] — 2026-11
+
+**Theme: production-surface contracts — queue, serializer, mailer, health, rate limiting, outbound resilience and reversible migrations.**
 
 ### Added
 - `Core\KernelInterface::$container` — a readable `public ContainerInterface $container { get; }`, so a test bridge (`waffle-commons/testing`, TEST-01) can swap in test doubles between `boot()` and `configure()` without importing the kernel's concrete classes (CARRY-04). **BC for direct implementers:** a class that implements `KernelInterface` itself must now expose a public readable `$container`; `waffle`'s `AbstractKernel` already does, so kernels that extend it are unaffected.
