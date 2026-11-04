@@ -16,6 +16,12 @@ The Waffle Framework's central contract package. Every other `waffle-commons/*` 
 
 This package contains interfaces, attributes, enums, exception interfaces, typed constants, and the small set of concrete routing exceptions (`RouteNotFoundException`, `MethodNotAllowedException`) shared across components. No business logic ever ships from here.
 
+## 🆕 Beta-7 highlights — the production surface contracts
+
+- **NEW namespaces** — `Queue\` and `Mailer\` (QUEUE-01/03), `Serializer\` (API-02), `OpenApi\Attribute\` (API-01), `Health\` (OPS-01), `RateLimit\` (NET-01) and `CircuitBreaker\` (NET-03). Also new: `HttpClient\TimeoutPolicy`, `RetryPolicy` and `SettlingClientInterface` (NET-02/03), `Http\ClientIpResolverInterface` (NET-01), `Attribute\ListOf`, and `Data\Migration\MigrationRunnerInterface::rollback()` / `status()` (OPS-03).
+- **BREAKING** — `Core\KernelInterface` gains a readable `public ContainerInterface $container { get; }`, so the testing bridge can swap in test doubles between `boot()` and `configure()`. A kernel that implements the interface itself must expose it.
+- `psr/clock` (PSR-20) joins the requirements, so the ecosystem shares one clock contract (`waffle-commons/utils` ships `SystemClock`); `psr/http-factory` is now declared, where it was only installed through a development tool.
+
 ## 🆕 Beta-2 highlights — HTTP method correctness
 
 - **NEW** — `Waffle\Commons\Contracts\Routing\Exception\MethodNotAllowedException` (concrete `final` class) and its `MethodNotAllowedExceptionInterface` marker. Carries the allowed-methods list so downstream renderers can emit the RFC 7231 `Allow` header on `405` responses.
@@ -42,27 +48,40 @@ composer require waffle-commons/contracts
 
 | Namespace | Purpose |
 | :--- | :--- |
-| `Waffle\Commons\Contracts\Attribute` | Marker attributes (`#[Dto]`) consumed by the framework's argument resolver. |
+| `Waffle\Commons\Contracts\Async` | Finish-request deferral (RFC-015): `DeferredTaskInterface`, `TaskRunnerInterface` and the deferral-budget exceptions. |
+| `Waffle\Commons\Contracts\Attribute` | DTO attributes: `#[Dto]`, consumed by the framework's argument resolver, and `#[ListOf]` (*Beta-7*), the element type of a list-typed member. |
+| `Waffle\Commons\Contracts\Auth` | The Universal Authentication Bridge (RFC-021): `AuthenticatorInterface`, `AuthenticationBridgeInterface`, token validation and key resolution, OAuth2/OIDC, signed identity assertions, `CredentialsProviderInterface`, WebAuthn, `SecurityContextInterface`. |
 | `Waffle\Commons\Contracts\Cache` | PSR-6 + PSR-16 extension interfaces (`CacheInterface`, `CacheItemPoolInterface`, `StampedeProtectionInterface`). |
+| `Waffle\Commons\Contracts\CircuitBreaker` | *Beta-7* (NET-03): `CircuitBreakerPolicy`, `CircuitDecision`, `CircuitStateStorageInterface`, `Enum\CircuitState`, `Event\CircuitStateChanged`, `Exception\CircuitOpenExceptionInterface`. |
 | `Waffle\Commons\Contracts\Config` | `ConfigInterface` typed getters (`getInt`, `getString`, `getArray`, `getBool`). |
 | `Waffle\Commons\Contracts\Console` | `ConsoleApplicationInterface`, `CommandInterface`, `InputInterface`, `OutputInterface`. |
 | `Waffle\Commons\Contracts\Constant\Constant` | Ecosystem-wide typed constants (env names, security levels, attribute keys). |
 | `Waffle\Commons\Contracts\Container` | `ContainerInterface` extending PSR-11 + `ResettableInterface` for worker-mode resets. |
 | `Waffle\Commons\Contracts\Controller` | `BaseControllerInterface`. |
-| `Waffle\Commons\Contracts\Core` | `KernelInterface` — the heart of the request lifecycle. |
+| `Waffle\Commons\Contracts\Core` | `KernelInterface` — the heart of the request lifecycle; a readable `$container` since Beta-7. |
+| `Waffle\Commons\Contracts\Data` | Connection pools (`RelationalConnectionPoolInterface`, `RedisConnectionPoolInterface`, `ConnectionTrackerInterface`), the query AST (`QueryInterface`, `Operator`, `Direction`), repositories and `DataMapperInterface`, `MigrationRunnerInterface` (`rollback()` / `status()` since Beta-7), `DataWarmerInterface`. |
 | `Waffle\Commons\Contracts\Enum` | Framework-wide enums (e.g. `Failsafe`). |
 | `Waffle\Commons\Contracts\ErrorHandler` | `ErrorRendererInterface` for content-negotiated error rendering. |
 | `Waffle\Commons\Contracts\EventDispatcher` | `EventDispatcherInterface`, `ListenerProviderInterface` (PSR-14 extension). |
 | `Waffle\Commons\Contracts\Exception` | Root exception interfaces (`ValidationExceptionInterface`, etc.). |
 | `Waffle\Commons\Contracts\Handler` | `ArgumentResolverInterface`, `ResponseConverterInterface`. |
-| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`GlobalsFactoryInterface`, `ResponseEmitterInterface`, `ServerRequestFactoryInterface`). |
+| `Waffle\Commons\Contracts\Health` | *Beta-7* (OPS-01): `HealthCheckInterface` (`name()`, `isCritical()`, `check()`), `HealthResult`, `Enum\HealthStatus`. |
+| `Waffle\Commons\Contracts\Http` | Framework-specific HTTP factories on top of PSR-7/17 (`GlobalsFactoryInterface`, `ResponseEmitterInterface`, `ServerRequestFactoryInterface`), and `ClientIpResolverInterface` (*Beta-7*), the client address behind trusted proxies. |
+| `Waffle\Commons\Contracts\HttpClient` | Outbound HTTP beyond PSR-18: `ConcurrentClientInterface` and `PromiseInterface`, then (*Beta-7*) `SettlingClientInterface`, `TimeoutPolicy` and `RetryPolicy`. |
+| `Waffle\Commons\Contracts\Mailer` | *Beta-7* (QUEUE-03): `MailerInterface`, the `Email` DTO, `Exception\MailerExceptionInterface`. |
+| `Waffle\Commons\Contracts\OpenApi` | *Beta-7* (API-01): `Attribute\Operation`, `Attribute\Response`, `Attribute\Property` — what `openapi:generate` cannot read from a signature. |
 | `Waffle\Commons\Contracts\Parser` | `YamlParserInterface`. |
 | `Waffle\Commons\Contracts\Pipeline` | `MiddlewareStackInterface` (PSR-15 stack). |
+| `Waffle\Commons\Contracts\Queue` | *Beta-7* (QUEUE-01/02): `QueueDispatcherInterface`, `QueueConsumerInterface`, `MessageInterface`, `MessageHandlerInterface`, `Envelope`, `FailedMessage`, `FailedMessageStoreInterface`, `Exception\QueueExceptionInterface`. |
+| `Waffle\Commons\Contracts\RateLimit` | *Beta-7* (NET-01): `RateLimiterInterface`, `LimiterStateStorageInterface`, `TokenBucket`, `RateLimitDecision`, `Exception\StateStorageExceptionInterface`. |
+| `Waffle\Commons\Contracts\Reactive` | Reactive broadcasting (RFC-018): the `#[Broadcast]` attribute, `BroadcastBufferInterface`, `BroadcastTransportInterface`, `MutationRecord`. |
 | `Waffle\Commons\Contracts\Routing` | `RouterInterface` + routing exception interfaces. |
 | `Waffle\Commons\Contracts\Runtime` | `RuntimeInterface` for FrankenPHP / classic SAPI bootstrap. |
-| `Waffle\Commons\Contracts\Security` | `SecurityInterface`, `SecurityRuleInterface`, `VoterInterface` + `#[Voter]` / `#[Rule]` attributes + CSRF attributes. |
+| `Waffle\Commons\Contracts\Security` | `SecurityInterface`, `SecurityRuleInterface`, `VoterInterface` + the `#[Voter]` and `#[PublicAccess]` attributes + CSRF attributes. |
+| `Waffle\Commons\Contracts\Serializer` | *Beta-7* (API-02): `DtoSerializerInterface`, `Exception\SerializerExceptionInterface`. |
 | `Waffle\Commons\Contracts\Service` | `ResettableInterface` — implemented by any service that needs reset between FrankenPHP worker requests. |
 | `Waffle\Commons\Contracts\System` | `SystemInterface`. |
+| `Waffle\Commons\Contracts\Telemetry` | Contract-first observability (RFC-005): `TracerInterface`, `SpanInterface`, `TextMapPropagatorInterface`, `MetricsRegistryInterface`, `MetricsCollectorInterface`, and the `Null*` implementations. |
 | `Waffle\Commons\Contracts\Validation` | `ValidatorInterface`, `ValidationResultInterface`, `ViolationInterface`. |
 
 ## 🐘 PHP 8.5 surface
@@ -70,7 +89,7 @@ composer require waffle-commons/contracts
 The contracts package is the canonical reference for the framework's PHP 8.5 contract style:
 
 - **Typed constants** everywhere — `public const string EVENT_NAME = '...';`, `public const int SECURITY_LEVEL10 = 10;`.
-- **Marker attributes** with `Attribute::TARGET_*` declarations (`#[Dto]`, `#[Voter]`, `#[Rule]`).
+- **Marker attributes** with `Attribute::TARGET_*` declarations (`#[Dto]`, `#[ListOf]`, `#[Voter]`, `#[PublicAccess]`).
 - **`final readonly class`** for value-object attributes.
 - All return types and parameter types are explicit; no `mixed` in the public surface except where PSR-11 mandates it (`ContainerInterface::get(): mixed`).
 
