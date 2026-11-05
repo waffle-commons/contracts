@@ -24,5 +24,12 @@ final class ConstantTest extends AbstractTestCase
         self::assertSame('_' . Constant::CLASSNAME, Constant::ATTR_CLASSNAME);
         self::assertSame('_' . Constant::CONTROLLER, Constant::ATTR_CONTROLLER);
         self::assertSame('_' . Constant::METHOD, Constant::ATTR_METHOD);
+        self::assertSame('_' . Constant::PARAMS, Constant::ATTR_PARAMS);
+    }
+
+    public function testRouteParamsAttributeKeepsItsDocumentedName(): void
+    {
+        // Applications read `$request->getAttribute('_params')` as documented: renaming it breaks them.
+        self::assertSame('_params', Constant::ATTR_PARAMS);
     }
 }

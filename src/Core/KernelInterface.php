@@ -6,6 +6,7 @@ namespace Waffle\Commons\Contracts\Core;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Waffle\Commons\Contracts\Container\ContainerInterface;
 
 /**
  * The Kernel is the heart of the application.
@@ -13,6 +14,16 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface KernelInterface
 {
+    /**
+     * The service container the kernel resolves its collaborators from.
+     *
+     * Readable so that a test bridge can swap in test doubles between boot() and
+     * configure(), before the container locks ([CARRY-04]). Application code
+     * receives its dependencies through constructors and never uses this
+     * property as a service locator.
+     */
+    public ContainerInterface $container { get; }
+
     /**
      * Boots the kernel and initializes environment/configuration.
      */

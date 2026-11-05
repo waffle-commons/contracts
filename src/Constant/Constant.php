@@ -45,6 +45,7 @@ final class Constant
     public const string PATH = 'path';
     public const string NAME = 'name';
     public const string PARAMS = 'params';
+    public const string ATTR_PARAMS = '_' . self::PARAMS;
     public const string REQUEST_URI = 'REQUEST_URI';
     public const string TYPE_STRING = 'string';
     public const string TYPE_INT = 'int';

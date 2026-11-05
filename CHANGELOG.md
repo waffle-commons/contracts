@@ -5,6 +5,42 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Released in lockstep with the Waffle Commons umbrella tag.
 
+## [0.1.0-beta7] — 2026-11
+
+**Theme: production-surface contracts — queue, serializer, mailer, health, rate limiting, outbound resilience and reversible migrations.**
+
+### Added
+- `Core\KernelInterface::$container` — a readable `public ContainerInterface $container { get; }`, so a test bridge (`waffle-commons/testing`, TEST-01) can swap in test doubles between `boot()` and `configure()` without importing the kernel's concrete classes (CARRY-04). **BC for direct implementers:** a class that implements `KernelInterface` itself must now expose a public readable `$container`; `waffle`'s `AbstractKernel` already does, so kernels that extend it are unaffected.
+- `psr/clock` (PSR-20) joins the requirements, so the whole ecosystem shares one clock contract; new beta7 code takes the clock by injection (CARRY-04).
+- `Attribute\ListOf` — declares the element type of a list-typed DTO member: `#[ListOf(OrderLine::class)]` for a `#[Dto]` class or a backed enum, `#[ListOf('string')]` for a scalar. PHP has no generics, so the build-time DTO-shape reader in `waffle-commons/utils` reads it, and the serializer and the OpenAPI generator agree on what a list holds (API-01/API-02, RFC-016).
+- **`OpenApi\Attribute\` — what `openapi:generate` cannot read from a signature (API-01, RFC-016):** `Operation` (summary, description, tags, deprecated; on a controller class it gives defaults to every route of the class), `Response` (repeatable: a status, its description and an optional `#[Dto]` body type; it rewrites a status the generator documents and adds any other) and `Property` (a description and an example on a DTO constructor parameter or property). Write them `#[OA\Operation(...)]` after `use Waffle\Commons\Contracts\OpenApi\Attribute as OA;`. Without them the generated document stays valid, only terse.
+- **`Queue\` — background processing contracts (QUEUE-01, RFC-015):**
+  - `MessageInterface` — a job: a strictly typed DTO that crosses the queue as JSON and is rebuilt through its constructor; delivery is at least once.
+  - `Envelope` — the message plus what delivery needs: a stable id (handlers de-duplicate on it), the queue, `availableAt`, the failed `attempts`, the W3C trace context of the dispatcher, and the transport's receipt of the current delivery. Immutable from outside (`private(set)`, validating hooks); `withReceipt()` and `withNextAttempt()` return copies.
+  - `QueueDispatcherInterface::dispatch()`, with an optional queue and `availableAt` for delayed work.
+  - `QueueConsumerInterface` — `receive()` with a bounded wait, then `acknowledge()` or `release()`; an unsettled delivery is reclaimed, never lost.
+  - `FailedMessageStoreInterface` and `FailedMessage` — the dead-letter store: the full envelope, the failure reason and the instant. The envelope is kept as it would be delivered again, so its attempts count every failed delivery, the last one included.
+  - `Exception\QueueExceptionInterface` — transport failures.
+- `Queue\MessageHandlerInterface` (QUEUE-02) — a worker's handler: `handles()` names the message class, `handle()`
+  receives the message and its envelope; throwing fails the delivery. The handled classes double as the only
+  classes a consumer rebuilds from a queue.
+- **`Serializer\` — the serializer seam (API-02):** `DtoSerializerInterface` (`supports`, `denormalize`,
+  `deserialize`, `serialize`) lets the controller argument resolver, the response converter and a queue driver
+  use the serializer without importing it; `Exception\SerializerExceptionInterface` marks its failures (the
+  exception code is the HTTP status).
+- **`Mailer\` — the mailer contract (QUEUE-03):** `MailerInterface::send()`, the `Email` DTO and `Exception\MailerExceptionInterface`. `Email` is a `#[Dto]` and a queue message, so transactional mail is dispatched to a worker. Its hooks validate every address and keep CR/LF out of the subject (no header injection). SMTP and API transports stay post-v1.
+- **`Health\` — health and readiness probes (OPS-01, RFC-023):** `HealthCheckInterface` (`name()`, `isCritical()`, `check()`), the binary `HealthResult` (`up()`, `down()`, a detail for the private report only) and `Enum\HealthStatus`. A probe never throws and does not time itself: the probe middleware measures every check and exports the durations to `/waffle-metrics` (RFC-023 §5).
+- **`RateLimit\` — rate limiting (NET-01, RFC-017 §3.1):** `RateLimiterInterface::consume()` (a configured limiter; a storage outage never surfaces as an exception, the limiter applies its `on_storage_failure` mode), `LimiterStateStorageInterface` (an atomic refill-and-take on a shared token bucket, so concurrent workers never over-admit — a PSR-16 cache cannot do that), the `TokenBucket` and `RateLimitDecision` DTOs (the `RateLimit-*` and `Retry-After` values, validated by hooks) and `Exception\StateStorageExceptionInterface`.
+- `HttpClient\TimeoutPolicy` and `HttpClient\RetryPolicy` (NET-02, RFC-024 §3.1) — immutable, hook-validated outbound policies: no infinite timeout can be built (`≤ 0` and values above the ceilings are refused; today's ceilings are the defaults), and retries are bounded by attempts, backoff cap and a total budget; only idempotent methods retry unless opted in.
+- `HttpClient\SettlingClientInterface` (NET-02/03, RFC-024 §3.3) — extends `ConcurrentClientInterface` with `settleRequests()`: every request of a batch maps to its response or to the client exception it failed with, in key order, and nothing is thrown. The resilience decorators settle through it, and a decorator in another component (auth's outbound credentials) implements it to keep a batch concurrent below it.
+- **`CircuitBreaker\` (NET-03, RFC-024 §3.2):** `CircuitBreakerPolicy`, `Enum\CircuitState`, `CircuitDecision`, `CircuitStateStorageInterface` (atomic shared state, same storage family as the rate limiter: it throws `RateLimit\Exception\StateStorageExceptionInterface`), the PSR-14 event `Event\CircuitStateChanged` and `Exception\CircuitOpenExceptionInterface` (code 503, never retried).
+- `Http\ClientIpResolverInterface` (NET-01) — the client address behind trusted proxies: the right-most `X-Forwarded-For` hop that is not an allow-listed proxy, so a client cannot choose its own rate-limit key.
+- `Constant\Constant::ATTR_PARAMS` (`'_params'`), the request attribute that carries the matched route's placeholder values, next to `ATTR_CLASSNAME`, `ATTR_CONTROLLER` and `ATTR_METHOD`. The routing middleware sets it and the controller dispatcher reads it under this name, which until now both spelled as a literal (CARRY-06).
+- **`Data\Migration\` — reversible migrations (OPS-03, RFC-014):** `MigrationRunnerInterface` gains `rollback(int $steps = 1, ?Closure $onReverted = null)` (reverts the most recent versions through their `V.down.sql` scripts, checking every target before anything runs) and `status()` (a `list<MigrationState>`: version, `Enum\MigrationStatus` applied/pending/missing, whether a down script exists, the ledger instant). **BC for direct implementers:** a class that implements the interface itself must add both methods; `waffle-commons/data`'s `MigrationRunner` does.
+
+### Fixed
+- `psr/http-factory` ^1.1 is now a declared requirement. `Http\ServerRequestFactoryInterface` and `Handler\ResponseFactoryAwareInterface` use the PSR-17 interfaces, which were only installed through a development tool, so an install without development dependencies loaded interfaces whose parents were missing.
+
 ## [0.1.0-beta6] — 2026-09
 
 **Theme: stabilisation — object-level ABAC seam.**
