@@ -4,6 +4,8 @@
         "tests",
         "var"
     ],
-    "safe_namespaces": [],
+    "safe_namespaces": [
+        "Psr\\"
+    ],
     "verbose": false
 }
